@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-20
+
+### Added
+- `vercel.json` pinning the Next.js framework, build/install/dev commands, and
+  serverless region, plus baseline security headers (`X-Content-Type-Options`,
+  `X-Frame-Options`, `Referrer-Policy`). Makes Vercel deploys deterministic even
+  if project-level settings drift.
+
 ## [0.2.0] - 2026-08-20
 
 ### Added
@@ -43,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `algo-trader` CLI entry point (`--demo` / `--csv`).
 - Pytest suite (20 tests), ruff configuration, example script, and README.
 
-[Unreleased]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/releases/tag/v0.1.0
