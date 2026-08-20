@@ -99,6 +99,12 @@ ruff check .    # lint
 
 See `examples/run_backtest.py` for a scriptable end-to-end example.
 
+### Versioning & changelog
+
+This project follows [Semantic Versioning](https://semver.org/). Every change
+is recorded in [`CHANGELOG.md`](CHANGELOG.md) and the version in
+`pyproject.toml` is bumped accordingly.
+
 ## Roadmap
 
 Natural next steps once the scaffold is in place:
