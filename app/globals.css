@@ -127,9 +127,14 @@ a {
   padding: 18px;
 }
 
-.controls {
-  position: sticky;
-  top: 20px;
+/* Sticky only in the wide, two-column layout. In the stacked layout the panel
+   sits above the charts, so keeping it sticky would pin it over them on scroll. */
+@media (min-width: 861px) {
+  .controls {
+    position: sticky;
+    top: 20px;
+    z-index: 1;
+  }
 }
 
 .controls h2 {
@@ -170,7 +175,8 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
-.field input[type="number"] {
+.field input,
+.field select {
   width: 100%;
   padding: 7px 9px;
   font: inherit;
@@ -182,7 +188,22 @@ a {
   border-radius: 7px;
 }
 
-.field input[type="number"]:focus {
+.field select {
+  cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) center,
+    calc(100% - 9px) center;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+.field input:focus,
+.field select:focus {
   outline: 2px solid var(--series-1);
   outline-offset: -1px;
   border-color: transparent;

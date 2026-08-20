@@ -31,7 +31,12 @@ export interface CostParams {
   slippage: number;
 }
 
+export type DataSource = "synthetic" | "ticker";
+
 export interface BacktestRequest {
+  source: DataSource;
+  /** Ticker symbol for the "ticker" source (e.g. "aapl.us"). */
+  symbol?: string;
   data: SyntheticParams;
   strategy: StrategyParams;
   costs: CostParams;
@@ -49,6 +54,8 @@ export interface Metrics {
 
 export interface BacktestResult {
   strategyName: string;
+  /** Human-readable data source, e.g. "Synthetic GBM" or "AAPL.US (Stooq)". */
+  sourceLabel: string;
   dates: string[];
   close: number[];
   fastMa: (number | null)[];

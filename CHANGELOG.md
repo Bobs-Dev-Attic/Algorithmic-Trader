@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-20
+
+### Added
+- **Real historical data** in the dashboard via a Stooq data source (free daily
+  end-of-day OHLCV, no API key). A "Data source" selector switches between
+  synthetic GBM and a real ticker (e.g. `aapl.us`, `^spx`, `btcusd`), fetched
+  server-side in the `/api/backtest` route.
+- `lib/data/history.ts` with a Stooq CSV parser and fetcher, plus unit tests
+  (`tests-web/history.test.ts`, run via `npm test`).
+- `runBacktestOnBars(...)` in the engine so backtests can run on any OHLCV
+  series (synthetic or real); `runBacktest(...)` now delegates to it.
+
+### Fixed
+- Charts no longer slide under the controls panel when scrolling: the panel is
+  now sticky only in the wide two-column layout, not in the stacked layout.
+
+### Changed
+- `BacktestResult` gained a `sourceLabel`; the header and footer show which data
+  source produced the results.
+
 ## [0.2.1] - 2026-08-20
 
 ### Added
@@ -51,7 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `algo-trader` CLI entry point (`--demo` / `--csv`).
 - Pytest suite (20 tests), ruff configuration, example script, and README.
 
-[Unreleased]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/releases/tag/v0.1.0
