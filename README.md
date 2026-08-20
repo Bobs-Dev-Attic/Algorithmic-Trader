@@ -39,6 +39,30 @@ Trades              :          9
 Total commission    :     414.74
 ```
 
+## Web dashboard
+
+A Next.js dashboard (deployable on Vercel) lets you run backtests and visualize
+results in the browser — tune the strategy, cost, and data parameters and see
+the equity curve, price + moving averages, exposure, and headline metrics update.
+
+```bash
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build (also type-checks)
+```
+
+The dashboard uses a TypeScript port of the engine under `lib/backtest/` (mirroring
+the Python reference in `src/algo_trader/`), so it runs entirely on Vercel with no
+Python runtime. Deploying is zero-config: Vercel auto-detects the Next.js app at
+the repo root.
+
+```
+app/                 # Next.js App Router: page, layout, /api/backtest route
+components/           # LineChart (theme-aware SVG charts with hover crosshairs)
+lib/backtest/         # TypeScript port: rng, data, strategy, broker, engine, metrics
+lib/format.ts         # UI formatting helpers
+```
+
 ## Architecture
 
 ```
