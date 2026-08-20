@@ -56,6 +56,30 @@ the Python reference in `src/algo_trader/`), so it runs entirely on Vercel with 
 Python runtime. Deploying is zero-config: Vercel auto-detects the Next.js app at
 the repo root.
 
+### Real historical data (free, no API key)
+
+The **Data source** control switches between synthetic GBM data and **real daily
+end-of-day prices from [Stooq](https://stooq.com)** — free and with no API key.
+Enter a symbol and run:
+
+| Kind | Example symbols |
+|---|---|
+| US stocks | `aapl.us`, `msft.us`, `spy.us` |
+| Indices | `^spx` (S&P 500), `^ndq` (Nasdaq) |
+| FX | `eurusd`, `gbpusd` |
+| Crypto | `btcusd`, `ethusd` |
+
+The fetch happens **server-side** in the `/api/backtest` route (so there's no CORS
+issue and any future API keys stay off the client). It needs outbound network
+access, which Vercel provides in production. Note: some sandboxed/preview
+environments with locked-down egress will return a "could not reach the data
+provider" error — that's the network policy, not a bug; the same request works on
+a normal Vercel deployment.
+
+Other free providers you can add later by dropping a new function alongside
+`lib/data/history.ts`: Tiingo, Twelve Data, Alpha Vantage (all key-gated free
+tiers), or Binance/Coinbase public APIs for crypto.
+
 ```
 app/                 # Next.js App Router: page, layout, /api/backtest route
 components/           # LineChart (theme-aware SVG charts with hover crosshairs)

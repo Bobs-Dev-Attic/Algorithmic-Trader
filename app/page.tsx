@@ -7,6 +7,8 @@ import { money, num, pct, signedPct } from "@/lib/format";
 import type { BacktestRequest, BacktestResult } from "@/lib/backtest/types";
 
 const DEFAULTS: BacktestRequest = {
+  source: "synthetic",
+  symbol: "aapl.us",
   data: { nPeriods: 504, startPrice: 100, annualDrift: 0.08, annualVol: 0.2, seed: 42 },
   strategy: { fast: 20, slow: 50, allowShort: false },
   costs: { initialCash: 100000, commission: 0.0005, slippage: 0.0005 },
@@ -55,11 +57,13 @@ export default function Page() {
         <div>
           <h1>Algorithmic Trader</h1>
           <div className="subtitle">
-            Backtest a moving-average crossover on synthetic price data.
+            Backtest a moving-average crossover on synthetic or real price data.
           </div>
         </div>
         <div className="badge">
-          {result ? `${result.strategyName} · ${result.dates.length} bars` : "—"}
+          {result
+            ? `${result.sourceLabel} · ${result.strategyName} · ${result.dates.length} bars`
+            : "—"}
         </div>
       </header>
 
@@ -67,6 +71,42 @@ export default function Page() {
         {/* ---- Controls ---- */}
         <form className="panel panel-pad controls" onSubmit={onSubmit}>
           <h2>Parameters</h2>
+
+          <div className="control-group">
+            <div className="field">
+              <label>
+                <span>Data source</span>
+              </label>
+              <select
+                value={req.source}
+                onChange={(e) =>
+                  setReq((r) => ({ ...r, source: e.target.value as BacktestRequest["source"] }))
+                }
+              >
+                <option value="synthetic">Synthetic (GBM)</option>
+                <option value="ticker">Real ticker (Stooq)</option>
+              </select>
+            </div>
+            {req.source === "ticker" && (
+              <div className="field">
+                <label>
+                  <span>Symbol</span>
+                  <span className="hint">Stooq</span>
+                </label>
+                <input
+                  type="text"
+                  value={req.symbol ?? ""}
+                  placeholder="aapl.us"
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  onChange={(e) => setReq((r) => ({ ...r, symbol: e.target.value }))}
+                />
+                <span className="hint" style={{ fontSize: 11 }}>
+                  e.g. aapl.us · msft.us · spy.us · ^spx · btcusd · eurusd
+                </span>
+              </div>
+            )}
+          </div>
 
           <div className="control-group">
             <NumField
@@ -117,30 +157,35 @@ export default function Page() {
 
           <div className="control-group">
             <NumField
-              label="Bars"
+              label={req.source === "ticker" ? "Max bars" : "Bars"}
+              hint={req.source === "ticker" ? "recent" : undefined}
               value={req.data.nPeriods}
               step={21}
               onChange={(v) => setReq((r) => ({ ...r, data: { ...r.data, nPeriods: v } }))}
             />
-            <NumField
-              label="Annual drift"
-              hint="μ"
-              step={0.01}
-              value={req.data.annualDrift}
-              onChange={(v) => setReq((r) => ({ ...r, data: { ...r.data, annualDrift: v } }))}
-            />
-            <NumField
-              label="Annual volatility"
-              hint="σ"
-              step={0.01}
-              value={req.data.annualVol}
-              onChange={(v) => setReq((r) => ({ ...r, data: { ...r.data, annualVol: v } }))}
-            />
-            <NumField
-              label="Seed"
-              value={req.data.seed}
-              onChange={(v) => setReq((r) => ({ ...r, data: { ...r.data, seed: v } }))}
-            />
+            {req.source === "synthetic" && (
+              <>
+                <NumField
+                  label="Annual drift"
+                  hint="μ"
+                  step={0.01}
+                  value={req.data.annualDrift}
+                  onChange={(v) => setReq((r) => ({ ...r, data: { ...r.data, annualDrift: v } }))}
+                />
+                <NumField
+                  label="Annual volatility"
+                  hint="σ"
+                  step={0.01}
+                  value={req.data.annualVol}
+                  onChange={(v) => setReq((r) => ({ ...r, data: { ...r.data, annualVol: v } }))}
+                />
+                <NumField
+                  label="Seed"
+                  value={req.data.seed}
+                  onChange={(v) => setReq((r) => ({ ...r, data: { ...r.data, seed: v } }))}
+                />
+              </>
+            )}
           </div>
 
           <button className="btn" type="submit" disabled={loading}>
@@ -223,7 +268,8 @@ export default function Page() {
 
           <footer className="footer">
             <span>
-              Synthetic GBM data · signals lagged one bar (no look-ahead) · costs modeled.
+              {result ? result.sourceLabel : "Synthetic"} data · signals lagged one bar (no
+              look-ahead) · costs modeled.
             </span>
             <span>Research/education only — not investment advice.</span>
           </footer>

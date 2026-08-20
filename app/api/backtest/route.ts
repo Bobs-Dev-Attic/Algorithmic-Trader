@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { runBacktest } from "@/lib/backtest/engine";
-import type { BacktestRequest } from "@/lib/backtest/types";
+import { runBacktest, runBacktestOnBars } from "@/lib/backtest/engine";
+import type { BacktestRequest, DataSource } from "@/lib/backtest/types";
+import { fetchStooqDaily, normalizeSymbol } from "@/lib/data/history";
 
 /** Clamp helper for validating numeric inputs within safe bounds. */
 function num(v: unknown, fallback: number, lo: number, hi: number): number {
@@ -18,9 +19,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
+  const source: DataSource = body.source === "ticker" ? "ticker" : "synthetic";
+  const maxBars = Math.round(num(body.data?.nPeriods, 504, 60, 5000));
+
   const req: BacktestRequest = {
+    source,
+    symbol: typeof body.symbol === "string" ? body.symbol : undefined,
     data: {
-      nPeriods: Math.round(num(body.data?.nPeriods, 504, 60, 5000)),
+      nPeriods: maxBars,
       startPrice: num(body.data?.startPrice, 100, 1, 100000),
       annualDrift: num(body.data?.annualDrift, 0.08, -1, 1),
       annualVol: num(body.data?.annualVol, 0.2, 0.01, 2),
@@ -46,6 +52,25 @@ export async function POST(request: Request) {
   }
 
   try {
+    if (req.source === "ticker") {
+      const sym = normalizeSymbol(req.symbol ?? "");
+      if (!sym) {
+        return NextResponse.json({ error: "Enter a ticker symbol (e.g. aapl.us)." }, { status: 400 });
+      }
+      const bars = await fetchStooqDaily(sym, { maxBars });
+      if (bars.length <= req.strategy.slow) {
+        return NextResponse.json(
+          {
+            error: `Only ${bars.length} bars available for "${sym}" — need more than the slow window (${req.strategy.slow}).`,
+          },
+          { status: 400 },
+        );
+      }
+      const label = `${sym.toUpperCase()} (Stooq)`;
+      const result = runBacktestOnBars(bars, req.strategy, req.costs, label);
+      return NextResponse.json(result);
+    }
+
     const result = runBacktest(req);
     return NextResponse.json(result);
   } catch (err) {

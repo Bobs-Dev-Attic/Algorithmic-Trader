@@ -15,22 +15,27 @@ import {
   sharpeRatio,
 } from "./metrics";
 import { generateSignals } from "./strategy";
-import type { BacktestRequest, BacktestResult } from "./types";
+import type { BacktestRequest, BacktestResult, CostParams, OHLCV, StrategyParams } from "./types";
 
 function clamp(x: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, x));
 }
 
-export function runBacktest(req: BacktestRequest): BacktestResult {
-  const data = generateSyntheticOHLCV(req.data);
+/** Run a backtest over an explicit OHLCV series (synthetic or real). */
+export function runBacktestOnBars(
+  data: OHLCV,
+  strategy: StrategyParams,
+  costs: CostParams,
+  sourceLabel: string,
+): BacktestResult {
   if (data.length === 0) throw new Error("Cannot backtest on empty data.");
 
-  const { name, signals, fastMa, slowMa } = generateSignals(data, req.strategy);
+  const { name, signals, fastMa, slowMa } = generateSignals(data, strategy);
 
   // Lag signals by one bar and clamp to [-1, 1].
   const target = signals.map((_, i) => (i === 0 ? 0 : clamp(signals[i - 1], -1, 1)));
 
-  const broker = new SimulatedBroker(req.costs);
+  const broker = new SimulatedBroker(costs);
 
   const dates: string[] = [];
   const close: number[] = [];
@@ -63,6 +68,7 @@ export function runBacktest(req: BacktestRequest): BacktestResult {
 
   return {
     strategyName: name,
+    sourceLabel,
     dates,
     close,
     fastMa,
@@ -79,4 +85,10 @@ export function runBacktest(req: BacktestRequest): BacktestResult {
       totalCommission,
     },
   };
+}
+
+/** Run a backtest on a freshly generated synthetic series. */
+export function runBacktest(req: BacktestRequest): BacktestResult {
+  const data = generateSyntheticOHLCV(req.data);
+  return runBacktestOnBars(data, req.strategy, req.costs, "Synthetic GBM");
 }
