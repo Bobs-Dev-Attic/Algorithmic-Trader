@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Local data (keep the directory, ignore large dumps)
+data/*.csv
+!data/.gitkeep
