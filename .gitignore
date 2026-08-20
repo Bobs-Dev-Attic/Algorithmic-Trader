@@ -28,3 +28,11 @@ htmlcov/
 # Local data (keep the directory, ignore large dumps)
 data/*.csv
 !data/.gitkeep
+
+# Node / Next.js (web dashboard)
+node_modules/
+.next/
+out/
+next-env.d.ts
+npm-debug.log*
+.vercel

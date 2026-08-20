@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-20
+
+### Added
+- **Web dashboard** (Next.js 14 + React) for running and visualizing backtests,
+  deployable on Vercel:
+  - Interactive controls for strategy (fast/slow windows, allow-short), costs
+    (initial cash, commission, slippage), and synthetic-data parameters
+    (bars, drift, volatility, seed).
+  - Headline metric tiles, an equity-curve chart, a price + moving-averages
+    chart, and an exposure chart — all theme-aware (light/dark) with hover
+    crosshairs and tooltips.
+  - `POST /api/backtest` route that validates inputs and runs the backtest.
+- TypeScript port of the backtest engine under `lib/backtest/` (seeded RNG,
+  synthetic OHLCV generation, SMA strategy, simulated broker, engine, metrics),
+  mirroring the Python reference implementation.
+
+### Notes
+- The Python engine under `src/algo_trader/` is functionally unchanged; the
+  version bump reflects the project-level release adding the dashboard.
+
 ## [0.1.0] - 2026-08-20
 
 ### Added
@@ -23,5 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `algo-trader` CLI entry point (`--demo` / `--csv`).
 - Pytest suite (20 tests), ruff configuration, example script, and README.
 
-[Unreleased]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Bobs-Dev-Attic/Algorithmic-Trader/releases/tag/v0.1.0
